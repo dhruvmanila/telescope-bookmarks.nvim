@@ -64,17 +64,25 @@ local function bookmarks(opts)
 
   local displayer = entry_display.create {
     separator = " ",
-    items = {
+    items = config.buku_include_tags and {
+      { width = 0.3 },
+      { width = 0.2 },
+      { remaining = true },
+    } or {
       { width = 0.5 },
       { remaining = true },
     },
   }
 
   local function make_display(entry)
-    return displayer {
+    return displayer(config.buku_include_tags and {
+      entry.name,
+      { entry.tags, "Tags" },
+      { entry.value, "Comment" },
+    } or {
       entry.name,
       { entry.value, "Comment" },
-    }
+    })
   end
 
   pickers
@@ -84,12 +92,20 @@ local function bookmarks(opts)
         results = results,
         entry_maker = function(entry)
           local name = (config.full_path and entry.path or entry.name) or ""
-          return {
-            display = make_display,
-            name = name,
-            value = entry.url,
-            ordinal = name .. " " .. entry.url,
-          }
+          return config.buku_include_tags
+              and {
+                display = make_display,
+                name = name,
+                value = entry.url,
+                tags = entry.tags,
+                ordinal = name .. " " .. entry.tags .. " " .. entry.url,
+              }
+            or {
+              display = make_display,
+              name = name,
+              value = entry.url,
+              ordinal = name .. " " .. entry.url,
+            }
         end,
       },
       previewer = false,
@@ -109,6 +125,7 @@ return telescope.register_extension {
     set_config("url_open_command", ext_config.url_open_command, "open")
     set_config("url_open_plugin", ext_config.url_open_plugin, nil)
     set_config("firefox_profile_name", ext_config.firefox_profile_name, nil)
+    set_config("buku_include_tags", ext_config.buku_include_tags, false)
   end,
   exports = {
     bookmarks = bookmarks,

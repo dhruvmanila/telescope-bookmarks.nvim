@@ -35,7 +35,7 @@ function buku.collect_bookmarks(state)
 
   local db = sqlite.new(utils.join_path(dbdir, "bookmarks.db")):open()
   local rows = db:select("bookmarks", {
-    keys = { "URL", "metadata" },
+    keys = { "URL", "metadata", "tags" },
   })
 
   local bookmarks = {}
@@ -44,6 +44,7 @@ function buku.collect_bookmarks(state)
       name = row.metadata,
       path = row.metadata,
       url = row.URL,
+      tags = row.tags:sub(2, -2), -- exclude leading and trailing comma
     })
   end
 

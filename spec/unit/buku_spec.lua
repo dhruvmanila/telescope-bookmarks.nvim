@@ -42,11 +42,13 @@ describe("buku", function()
           name = "GitHub",
           path = "GitHub",
           url = "https://github.com/",
+          tags = "coding",
         },
         {
           name = "Google",
           path = "Google",
           url = "https://google.com/",
+          tags = "search",
         },
       })
     end)
